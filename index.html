@@ -38,7 +38,7 @@
         }
 
         .header-content h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             margin: 0 0 16px 0;
             letter-spacing: -1px;
@@ -51,12 +51,11 @@
             font-weight: 300;
         }
 
-        /* 復古無人機圖片樣式 */
+        /* 圖片樣式 */
         .profile-img {
-            width: 280px;
-            height: 280px;
+            width: 300px;
+            height: 300px;
             object-fit: contain;
-            /* 關鍵：讓白底圖片融入背景 */
             mix-blend-mode: multiply;
             filter: contrast(1.1);
             opacity: 0.9;
@@ -143,23 +142,20 @@
 <body>
 
 <div class="container">
-
     <header>
-        <p class="header-content">
-        <h2>Insights & Altitudes</h2>
-        <h3 style="font-size: 1.1rem; color: #555; font-weight: 300; margin-top: -10px; margin-bottom: 30px;">
+    <div class="header-content">
+        <h1>Insights & Altitudes</h1>
+        <h2 style="font-size: 1.1rem; color: #555; font-weight: 300; margin-top: -10px; margin-bottom: 30px;">
             Exploring the world through data patterns and aerial views.
-        </h3>
-        <img src="assets/profile.jpg" alt="Vintage Drone" class="profile-img">
-    </header>
-    <p>
-        Hi, I'm <strong>Payton Lin</strong>. Welcome to my growing archive.<br>
-        This is a personal space where I compile my academic data projects and share my aerial photography
-        interests.
-        Starting with case studies like the <em>IBM Attrition Analysis</em>,
-        I am building a collection that reflects my path in developing my data analytics skill set and exploring the
-        world from above.
-    </p>
+        </h2>
+        <div style="line-height: 1.5;">
+            Hi, I'm <strong>Payton Lin</strong>. Welcome to my growing archive.
+            This is a personal space where I compile my academic data projects and share my aerial photography interests.
+            Starting with case studies like the IBM Attrition Analysis,
+            I am building a collection that reflects my path in developing my data analytics skill set and exploring the world from above.
+        </div>
+    </div> <img src="assets/profile.jpg" alt="Vintage Drone" class="profile-img">
+</header>
 
     <div class="domain-title">01 / Data Analytics & Case Studies</div>
 
