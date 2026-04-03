@@ -1,167 +1,253 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>IBM_HR_Employee_Attrition.ipynb</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<style type="text/css">
-.s0 { color: #abb2bf;}
-.s1 { color: #5c6370;}
-.s2 { color: #c678dd;}
-.s3 { color: #98c379;}
-.s4 { color: #d19a66;}
-.s5 { color: #56b6c2;}
-.ls0 { height: 1px; border-width: 0; color: #3b4048; background-color:#3b4048}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBM Employee Attrition Analysis | Payton Lin</title>
+    <style>
+        /* 基礎全域設定：簡約俐落風格 */
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        /* 標題設定 */
+        h1 {
+            color: #1a252f;
+            border-bottom: 3px solid #34495e;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+        }
+        p, li {
+            font-size: 16px;
+            color: #4a5568;
+        }
+        strong {
+            color: #2d3748;
+        }
+        /* 程式碼區塊設定：重現 Jupyter 的專業感 */
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        code {
+            font-family: 'Courier New', Consolas, monospace;
+        }
+        /* 圖表區塊設定 */
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
-<body bgcolor="#282c34">
-<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
-<tr><td><center>
-<font face="Arial, Helvetica" color="#000000">
-IBM_HR_Employee_Attrition.ipynb</font>
-</center></td></tr></table>
-<pre><span class="s0">#%% md 
-# IBM Employee Attrition Analysis 
-**Author:** Payton Lin   
-**Date:** 2025/12/02 
- 
-## 1. Executive Summary 
-**Project Background:** IBM is currently facing challenges with employee attrition, which negatively impacts business continuity and increases recruitment costs. This project aims to solve this business problem by utilizing data analytics to identify the root causes of turnover. 
- 
-**Key Results:** * The Random Forest model achieved a prediction accuracy of **87.76%**. 
-* Key drivers of turnover identified: **Monthly Income**, **Age**, and **Overtime**. 
- 
-**Key Recommendations:** The HR department is advised to prioritize reviewing the salary structure of key positions and to conduct assessments targeting employees with high overtime workloads. <hr class="ls0">#%% 
-</span><span class="s1"># 1. 引入分析與繪圖套件</span>
-<span class="s2">import </span><span class="s0">pandas </span><span class="s2">as </span><span class="s0">pd</span>
-<span class="s2">import </span><span class="s0">matplotlib.pyplot </span><span class="s2">as </span><span class="s0">plt</span>
-<span class="s2">import </span><span class="s0">seaborn </span><span class="s2">as </span><span class="s0">sns</span>
-<span class="s2">import </span><span class="s0">os</span>
-<span class="s2">from </span><span class="s0">sklearn.ensemble </span><span class="s2">import </span><span class="s0">RandomForestClassifier</span>
-<span class="s2">from </span><span class="s0">sklearn.metrics </span><span class="s2">import </span><span class="s0">confusion_matrix, accuracy_score</span>
-<span class="s2">from </span><span class="s0">sklearn.model_selection </span><span class="s2">import </span><span class="s0">train_test_split</span>
+<body>
 
-<span class="s1"># 2. 設定繪圖風格</span>
-<span class="s0">plt.style.use(</span><span class="s3">'fivethirtyeight'</span><span class="s0">)</span>
-<span class="s0">sns.set_style(style=</span><span class="s2">None</span><span class="s0">)</span>
-<span class="s0">sns.set_context(</span><span class="s3">&quot;notebook&quot;</span><span class="s0">, font_scale=</span><span class="s4">1.0</span><span class="s0">)</span>
+<div class="container">
 
-<span class="s1"># 3. 確保圖片資料夾存在</span>
-<span class="s0">image_dir = </span><span class="s3">'report_images'</span>
-<span class="s2">if not </span><span class="s0">os.path.exists(image_dir):</span>
-    <span class="s0">os.makedirs(image_dir)</span><hr class="ls0"><span class="s0">#%% md 
-## 2. Project Execution: CRISP-DM Process 
-### Phase 1 &amp; 2: Business &amp; Data Understanding 
-**Business Objective:** Reduce employee turnover, retain talent, and improve employee satisfaction. 
- 
-**Data Overview:** The dataset used is the IBM HR Analytics dataset, containing 1470 employee records. <hr class="ls0">#%% 
-</span><span class="s2">import </span><span class="s0">os</span>
-<span class="s2">import </span><span class="s0">pandas </span><span class="s2">as </span><span class="s0">pd</span>
+    <h1>IBM Employee Attrition Analysis</h1>
+    <p>
+        <strong>Author:</strong> Payton Lin<br>
+        <strong>Date:</strong> 2025/12/02
+    </p>
 
-<span class="s0">print(</span><span class="s3">&quot;--- Smart Loading Data ---&quot;</span><span class="s0">)</span>
+    <h2>1. Executive Summary</h2>
+    <p><strong>Project Background:</strong> IBM is currently facing challenges with employee attrition, which negatively impacts business continuity and increases recruitment costs. This project aims to solve this business problem by utilizing data analytics to identify the root causes of turnover.</p>
 
-<span class="s1"># 1. 設定檔案名稱 &amp; 專案資料夾名稱</span>
-<span class="s0">file_name = </span><span class="s3">'HR-Employee-Attrition.csv'</span>
-<span class="s0">project_folder = </span><span class="s3">'IBM_AnalysisIBM_Analysis'</span>
+    <p><strong>Key Results:</strong></p>
+    <ul>
+        <li>The Random Forest model achieved a prediction accuracy of <strong>87.76%</strong>.</li>
+        <li>Key drivers of turnover identified: <strong>Monthly Income</strong>, <strong>Age</strong>, and <strong>Overtime</strong>.</li>
+    </ul>
 
-<span class="s1"># 2. 自動導航：不管現在在哪，都試著找到檔案</span>
-<span class="s2">if </span><span class="s0">os.path.exists(file_name):</span>
-    <span class="s0">print(</span><span class="s3">f&quot;📍 位置正確，直接讀取: </span><span class="s5">{</span><span class="s0">file_name</span><span class="s5">}</span><span class="s3">&quot;</span><span class="s0">)</span>
-<span class="s2">else</span><span class="s0">:</span>
-    <span class="s1"># 如果找不到，試著往內層資料夾找</span>
-    <span class="s0">found = </span><span class="s2">False</span>
-    <span class="s2">for </span><span class="s0">root, dirs, files </span><span class="s2">in </span><span class="s0">os.walk(</span><span class="s3">&quot;.&quot;</span><span class="s0">):</span>
-        <span class="s2">if </span><span class="s0">file_name </span><span class="s2">in </span><span class="s0">files:</span>
-            <span class="s0">print(</span><span class="s3">f&quot;🔍 在子資料夾找到檔案！正在切換路徑至: </span><span class="s5">{</span><span class="s0">root</span><span class="s5">}</span><span class="s3">&quot;</span><span class="s0">)</span>
-            <span class="s0">os.chdir(root)</span>
-            <span class="s0">found = </span><span class="s2">True</span>
-            <span class="s2">break</span>
-    
-    <span class="s2">if not </span><span class="s0">found:</span>
-        <span class="s0">print(</span><span class="s3">f&quot;❌ 找不到檔案。請確認 </span><span class="s5">{</span><span class="s0">file_name</span><span class="s5">} </span><span class="s3">是否有放在專案資料夾中。&quot;</span><span class="s0">)</span>
-        <span class="s0">print(</span><span class="s3">f&quot;目前 Python 所在的目錄是: </span><span class="s5">{</span><span class="s0">os.getcwd()</span><span class="s5">}</span><span class="s3">&quot;</span><span class="s0">)</span>
+    <p><strong>Key Recommendations:</strong> The HR department is advised to prioritize reviewing the salary structure of key positions and to conduct assessments targeting employees with high overtime workloads.</p>
 
-<span class="s1"># 3. 讀取資料</span>
-<span class="s2">if </span><span class="s0">os.path.exists(file_name):</span>
-    <span class="s0">df = pd.read_csv(file_name)</span>
-    <span class="s0">print(</span><span class="s3">f&quot;✅ 成功讀取資料！資料大小: </span><span class="s5">{</span><span class="s0">df.shape</span><span class="s5">}</span><span class="s3">&quot;</span><span class="s0">)</span>
-    <span class="s0">display(df.head())</span><hr class="ls0"><span class="s0">#%% md 
-### Phase 3: Data Preparation 
-We performed One-Hot Encoding to transform categorical variables into a numeric format suitable for the Random Forest model. <hr class="ls0">#%% 
-print(</span><span class="s3">&quot;--- Data Cleaning &amp; Encoding ---&quot;</span><span class="s0">)</span>
+    <h2>2. Project Execution: CRISP-DM Process</h2>
+    <h3>Phase 1 & 2: Business & Data Understanding</h3>
+    <p><strong>Business Objective:</strong> Reduce employee turnover, retain talent, and improve employee satisfaction.</p>
+    <p><strong>Data Overview:</strong> The dataset used is the IBM HR Analytics dataset, containing 1470 employee records.</p>
 
-<span class="s1"># 1. 刪除無用欄位</span>
-<span class="s0">useless_cols = [</span><span class="s3">'EmployeeCount'</span><span class="s0">, </span><span class="s3">'Over18'</span><span class="s0">, </span><span class="s3">'StandardHours'</span><span class="s0">, </span><span class="s3">'EmployeeNumber'</span><span class="s0">]</span>
-<span class="s0">df_clean = df.drop(columns=[c </span><span class="s2">for </span><span class="s0">c </span><span class="s2">in </span><span class="s0">useless_cols </span><span class="s2">if </span><span class="s0">c </span><span class="s2">in </span><span class="s0">df.columns], axis=</span><span class="s4">1</span><span class="s0">)</span>
+<pre><code># 1. 引入分析與繪圖套件
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.model_selection import train_test_split
 
-<span class="s1"># 2. 目標變數編碼 (Yes -&gt; 1, No -&gt; 0)</span>
-<span class="s2">if </span><span class="s3">'Attrition' </span><span class="s2">in </span><span class="s0">df_clean.columns:</span>
-    <span class="s0">df_clean[</span><span class="s3">'Attrition'</span><span class="s0">] = df_clean[</span><span class="s3">'Attrition'</span><span class="s0">].apply(</span><span class="s2">lambda </span><span class="s0">x: </span><span class="s4">1 </span><span class="s2">if </span><span class="s0">x == </span><span class="s3">'Yes' </span><span class="s2">else </span><span class="s4">0</span><span class="s0">)</span>
+# 2. 設定繪圖風格
+plt.style.use('fivethirtyeight')
+sns.set_style(style=None)
+sns.set_context("notebook", font-scale=1.0)
 
-<span class="s1"># 3. 類別變數</span>
-<span class="s0">categorical_cols = df_clean.select_dtypes(include=[</span><span class="s3">'object'</span><span class="s0">]).columns</span>
-<span class="s0">df_final = pd.get_dummies(df_clean, columns=categorical_cols, drop_first=</span><span class="s2">True</span><span class="s0">)</span>
+# 3. 確保圖片資料夾存在
+image_dir = 'report_images'
+if not os.path.exists(image_dir):
+    os.makedirs(image_dir)
 
-<span class="s1"># 視覺化影響流失率的前幾名相關因子</span>
-<span class="s0">plt.figure(figsize=(</span><span class="s4">10</span><span class="s0">, </span><span class="s4">8</span><span class="s0">))</span>
-<span class="s0">correlations = df_final.corr()[</span><span class="s3">'Attrition'</span><span class="s0">].sort_values(ascending=</span><span class="s2">False</span><span class="s0">)</span>
-<span class="s0">top_corr = pd.concat([correlations.drop(</span><span class="s3">'Attrition'</span><span class="s0">).head(</span><span class="s4">10</span><span class="s0">), correlations.tail(</span><span class="s4">10</span><span class="s0">)])</span>
+print("--- Smart Loading Data ---")
 
-<span class="s0">top_corr.plot(kind=</span><span class="s3">'barh'</span><span class="s0">, color=</span><span class="s3">'teal'</span><span class="s0">)</span>
-<span class="s0">plt.title(</span><span class="s3">'Top Factors Correlated with Attrition'</span><span class="s0">)</span>
-<span class="s0">plt.axvline(x=</span><span class="s4">0</span><span class="s0">, color=</span><span class="s3">'black'</span><span class="s0">, linewidth=</span><span class="s4">0.5</span><span class="s0">)</span>
-<span class="s0">plt.tight_layout()</span>
+# 1. 設定檔案名稱 & 專案資料夾名稱
+file_name = 'HR-Employee-Attrition.csv'
+project_folder = 'IBM_Analysis'
 
-<span class="s1"># 保存並顯示</span>
-<span class="s0">plt.savefig(os.path.join(image_dir, </span><span class="s3">'6_correlation_chart.png'</span><span class="s0">), dpi=</span><span class="s4">300</span><span class="s0">, bbox_inches=</span><span class="s3">'tight'</span><span class="s0">)</span>
-<span class="s0">plt.show()  </span><span class="s1"># 讓圖表顯示在網頁上</span><hr class="ls0"><span class="s0">#%% md 
-### Phase 4: Modeling &amp; Evaluation 
-We used a **Random Forest Classifier** to predict employee attrition. 
- 
-**Model Performance:** 
-* **Accuracy:** 87.76% <hr class="ls0">#%% 
-print(</span><span class="s3">&quot;--- Modeling &amp; Evaluation (Random Forest) ---&quot;</span><span class="s0">)</span>
+# 2. 自動導航：不管現在在哪，都試著找到檔案
+if os.path.exists(file_name):
+    print(f"📍 位置正確，直接讀取: {file_name}")
+else:
+    found = False
+    for root, dirs, files in os.walk("."):
+        if file_name in files:
+            print(f"🔍 在子資料夾找到檔案！正在切換路徑至: {root}")
+            os.chdir(root)
+            found = True
+            break
 
-<span class="s1"># 1. 切分訓練集與測試集</span>
-<span class="s0">X = df_final.drop(</span><span class="s3">'Attrition'</span><span class="s0">, axis=</span><span class="s4">1</span><span class="s0">)</span>
-<span class="s0">y = df_final[</span><span class="s3">'Attrition'</span><span class="s0">]</span>
-<span class="s0">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=</span><span class="s4">0.2</span><span class="s0">, random_state=</span><span class="s4">42</span><span class="s0">)</span>
+    if not found:
+        print(f"❌ 找不到檔案。請確認 {file_name} 是否有放在專案資料夾中。")
 
-<span class="s1"># 2. 訓練模型</span>
-<span class="s0">rf_model = RandomForestClassifier(n_estimators=</span><span class="s4">100</span><span class="s0">, random_state=</span><span class="s4">42</span><span class="s0">)</span>
-<span class="s0">rf_model.fit(X_train, y_train)</span>
+# 3. 讀取資料
+if os.path.exists(file_name):
+    df = pd.read_csv(file_name)
+    print(f"✅ 成功讀取資料！資料大小: {df.shape}")</code></pre>
 
-<span class="s1"># 3. 預測結果</span>
-<span class="s0">y_pred = rf_model.predict(X_test)</span>
-<span class="s0">accuracy = accuracy_score(y_test, y_pred)</span>
+    <h3>Phase 3: Data Preparation</h3>
+    <p>We performed One-Hot Encoding to transform categorical variables into a numeric format suitable for the Random Forest model.</p>
 
-<span class="s0">print(</span><span class="s3">f&quot;--------------------------------------------------&quot;</span><span class="s0">)</span>
-<span class="s0">print(</span><span class="s3">f&quot;🏆 Model Accuracy: </span><span class="s5">{</span><span class="s0">accuracy</span><span class="s5">:</span><span class="s3">.2%</span><span class="s5">}</span><span class="s3">&quot;</span><span class="s0">)</span>
-<span class="s0">print(</span><span class="s3">f&quot;--------------------------------------------------&quot;</span><span class="s0">)</span>
+<pre><code>print("--- Data Cleaning & Encoding ---")
 
-<span class="s1"># [視覺化 1] 混淆矩陣</span>
-<span class="s0">plt.figure(figsize=(</span><span class="s4">6</span><span class="s0">, </span><span class="s4">5</span><span class="s0">))</span>
-<span class="s0">cm = confusion_matrix(y_test, y_pred)</span>
-<span class="s0">sns.heatmap(cm, annot=</span><span class="s2">True</span><span class="s0">, fmt=</span><span class="s3">'d'</span><span class="s0">, cmap=</span><span class="s3">'Blues'</span><span class="s0">, cbar=</span><span class="s2">False</span><span class="s0">)</span>
-<span class="s0">plt.title(</span><span class="s3">'Confusion Matrix'</span><span class="s0">)</span>
-<span class="s0">plt.ylabel(</span><span class="s3">'True Label'</span><span class="s0">)</span>
-<span class="s0">plt.xlabel(</span><span class="s3">'Predicted Label'</span><span class="s0">)</span>
-<span class="s0">plt.tight_layout()</span>
-<span class="s0">plt.savefig(os.path.join(image_dir, </span><span class="s3">'7_confusion_matrix.png'</span><span class="s0">), dpi=</span><span class="s4">300</span><span class="s0">, bbox_inches=</span><span class="s3">'tight'</span><span class="s0">)</span>
-<span class="s0">plt.show() </span><span class="s1"># 顯示圖表</span>
+# 1. 刪除無用欄位
+useless_cols = ['EmployeeCount', 'Over18', 'StandardHours', 'EmployeeNumber']
+df_clean = df.drop(columns=[c for c in useless_cols if c in df.columns], axis=1)
 
-<span class="s1"># [視覺化 2] 特徵重要性 (Top 15)</span>
-<span class="s0">feature_importances = pd.Series(rf_model.feature_importances_, index=X.columns)</span>
-<span class="s0">top_15 = feature_importances.nlargest(</span><span class="s4">15</span><span class="s0">).sort_values(ascending=</span><span class="s2">True</span><span class="s0">)</span>
+# 2. 目標變數編碼 (Yes -> 1, No -> 0)
+if 'Attrition' in df_clean.columns:
+    df_clean['Attrition'] = df_clean['Attrition'].apply(lambda x: 1 if x == 'Yes' else 0)
 
-<span class="s0">plt.figure(figsize=(</span><span class="s4">10</span><span class="s0">, </span><span class="s4">8</span><span class="s0">))</span>
-<span class="s0">top_15.plot(kind=</span><span class="s3">'barh'</span><span class="s0">, color=</span><span class="s3">'#4c72b0'</span><span class="s0">)</span>
-<span class="s0">plt.title(</span><span class="s3">'Top 15 Feature Importance'</span><span class="s0">)</span>
-<span class="s0">plt.xlabel(</span><span class="s3">'Importance'</span><span class="s0">)</span>
-<span class="s0">plt.tight_layout()</span>
-<span class="s0">plt.savefig(os.path.join(image_dir, </span><span class="s3">'8_feature_importance.png'</span><span class="s0">), dpi=</span><span class="s4">300</span><span class="s0">, bbox_inches=</span><span class="s3">'tight'</span><span class="s0">)</span>
-<span class="s0">plt.show() </span><span class="s1"># 顯示圖表</span><hr class="ls0"><span class="s0">#%% md 
-## 3. Conclusions &amp; Recommendations 
-**What could be improved:** 
-* **Balancing the Data:** Future work should address the class imbalance between &quot;staying&quot; and &quot;leaving&quot; employees. 
-* **Focusing on Business Costs:** The model should be tuned to be more sensitive to potential leavers to reduce the cost of missed predictions.</span></pre>
+# 3. 類別變數處理
+categorical_cols = df_clean.select_dtypes(include=['object']).columns
+df_final = pd.get_dummies(df_clean, columns=categorical_cols, drop_first=True)
+
+# 視覺化影響流失率的前幾名相關因子
+plt.figure(figsize=(10, 8))
+correlations = df_final.corr()['Attrition'].sort_values(ascending=False)
+top_corr = pd.concat([correlations.drop('Attrition').head(10), correlations.tail(10)])
+
+top_corr.plot(kind='barh', color='teal')
+plt.title('Top Factors Correlated with Attrition')
+plt.axvline(x=0, color='black', linewidth=0.5)
+plt.tight_layout()
+
+# 保存並顯示
+plt.savefig(os.path.join(image_dir, '6_correlation_chart.png'), dpi=300, bbox_inches='tight')
+plt.show()</code></pre>
+
+    <div class="image-container">
+        <img src="report_images/6_correlation_chart.png" alt="Top Factors Correlated with Attrition" onerror="this.style.display='none'">
+    </div>
+
+    <h3>Phase 4: Modeling & Evaluation</h3>
+    <p>We used a <strong>Random Forest Classifier</strong> to predict employee attrition.</p>
+    <ul>
+        <li><strong>Model Performance:</strong> Accuracy: 87.76%</li>
+    </ul>
+
+<pre><code>print("--- Modeling & Evaluation (Random Forest) ---")
+
+# 1. 切分訓練集與測試集
+X = df_final.drop('Attrition', axis=1)
+y = df_final['Attrition']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 2. 訓練模型
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# 3. 預測結果
+y_pred = rf_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"--------------------------------------------------")
+print(f"🏆 Model Accuracy: {accuracy:.2%}")
+print(f"--------------------------------------------------")
+
+# [視覺化 1] 混淆矩陣
+plt.figure(figsize=(6, 5))
+cm = confusion_matrix(y_test, y_pred)
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False)
+plt.title('Confusion Matrix')
+plt.ylabel('True Label')
+plt.xlabel('Predicted Label')
+plt.tight_layout()
+plt.savefig(os.path.join(image_dir, '7_confusion_matrix.png'), dpi=300, bbox_inches='tight')
+plt.show()
+
+# [視覺化 2] 特徵重要性 (Top 15)
+feature_importances = pd.Series(rf_model.feature_importances_, index=X.columns)
+top_15 = feature_importances.nlargest(15).sort_values(ascending=True)
+
+plt.figure(figsize=(10, 8))
+top_15.plot(kind='barh', color='#4c72b0')
+plt.title('Top 15 Feature Importance')
+plt.xlabel('Importance')
+plt.tight_layout()
+plt.savefig(os.path.join(image_dir, '8_feature_importance.png'), dpi=300, bbox_inches='tight')
+plt.show()</code></pre>
+
+    <div class="image-container">
+        <img src="report_images/7_confusion_matrix.png" alt="Confusion Matrix" onerror="this.style.display='none'">
+    </div>
+
+    <div class="image-container">
+        <img src="report_images/8_feature_importance.png" alt="Top 15 Feature Importance" onerror="this.style.display='none'">
+    </div>
+
+    <h2>3. Conclusions & Recommendations</h2>
+    <p><strong>What could be improved:</strong></p>
+    <ul>
+        <li><strong>Balancing the Data:</strong> Future work should address the class imbalance between "staying" and "leaving" employees.</li>
+        <li><strong>Focusing on Business Costs:</strong> The model should be tuned to be more sensitive to potential leavers to reduce the cost of missed predictions.</li>
+    </ul>
+
+</div>
+
 </body>
 </html>
