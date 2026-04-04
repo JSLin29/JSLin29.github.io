@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBM Employee Attrition Analysis | Payton Lin</title>
+    <style>
+        /* 基礎全域設定*/
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        /* 標題設定 */
+        h1 {
+            color: #1a252f;
+            border-bottom: 3px solid #34495e;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+        }
+        h4 {
+            color: #4a5568;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+        p, li {
+            font-size: 16px;
+            color: #4a5568;
+        }
+        strong {
+            color: #2d3748;
+        }
+        /* 程式碼區塊設定*/
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        code {
+            font-family: 'Courier New', Consolas, monospace;
+        }
+        /* 圖表區塊設定 */
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        /* 洞察區塊特別標示 */
+        .insight-box {
+            background-color: #e2f0cb;
+            border-left: 4px solid #7cb342;
+            padding: 10px 15px;
+            margin: 10px 0 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>IBM Employee Attrition Analysis</h1>
+    <p>
+        <strong>Author:</strong> Payton Lin<br>
+        <strong>Date:</strong> 2025/12/02
+    </p>
+    <div style="margin: 20px 0;">
+        <a href="這裡貼上你的GitHub_ipynb檔案網址" target="_blank" style="display: inline-block; background-color: #2c3e50; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">
+            <svg style="width: 16px; height: 16px; vertical-align: middle; margin-right: 8px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            View Source Code on GitHub
+        </a>
+    </div>
+
+    <h2>1. Executive Summary</h2>
+    <p><strong>Project Background:</strong> IBM is currently facing challenges with employee attrition, which negatively impacts business continuity and increases recruitment costs. This project aims to solve this business problem by utilizing data analytics to identify the root causes of turnover.</p>
+
+    <p><strong>Key Results:</strong></p>
+    <ul>
+        <li>The Random Forest model achieved a prediction accuracy of <strong>87.76%</strong>, meeting the business success criteria for reliability.</li>
+        <li>Feature importance analysis revealed that <strong>Monthly Income</strong>, <strong>Age</strong>, and <strong>Overtime</strong> are the top three drivers of employee turnover.</li>
+    </ul>
+
+    <p><strong>Key Recommendations:</strong> The HR department is advised to prioritize reviewing the salary structure of key positions and to conduct assessments targeting employees with high overtime workloads.</p>
+
+    <h2>2. Project Execution: CRISP-DM Process</h2>
+
+    <h3>Phase 1 & 2: Business & Data Understanding</h3>
+    <p><strong>Business Objective:</strong> Reduce employee turnover, retain talent, and improve employee satisfaction.</p>
+    <p><strong>Data Overview:</strong> The dataset used is the IBM HR Analytics dataset, containing 1470 employee records covering demographics, job satisfaction, and salary characteristics.</p>
+
+    <h4>Exploratory Analysis (EDA):</h4>
+    <ul>
+        <li><strong>Overall situation:</strong> The current overall churn rate is approximately 16%.</li>
+        <li><strong>Impact of overtime:</strong> Data show that the turnover rate among employees who "work overtime" is significantly higher than that among employees who "do not work overtime", suggesting a potential work-life balance issue.</li>
+        <li><strong>Salary differences:</strong> The median monthly income of those who left the company was significantly lower than that of those who remained, suggesting that insufficient salary competitiveness was the main reason for turnover.</li>
+        <li><strong>Age distribution:</strong> Younger groups (especially those under 30) are at high risk of attrition.</li>
+    </ul>
+
+    <pre><code># 1. 引入分析與繪圖套件
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.model_selection import train_test_split
+
+# 確保圖片資料夾存在
+image_dir = 'report_images'
+if not os.path.exists(image_dir):
+    os.makedirs(image_dir)
+
+# 讀取資料
+file_name = 'HR-Employee-Attrition.csv'
+if os.path.exists(file_name):
+    df = pd.read_csv(file_name)
+    print(f"✅ 成功讀取資料！資料大小: {df.shape}")</code></pre>
+
+    <h3>Phase 3: Data Preparation</h3>
+    <p>Single-value columns were removed because they lacked predictive value. The target variable Attrition was converted to a binary numeric value, and One-hot encoding was applied to categorical variables to convert the text into a numeric format readable by the model.</p>
+
+<pre><code>print("--- Data Cleaning & Encoding ---")
+
+# 1. 刪除無用欄位
+useless_cols = ['EmployeeCount', 'Over18', 'StandardHours', 'EmployeeNumber']
+df_clean = df.drop(columns=[c for c in useless_cols if c in df.columns], axis=1)
+
+# 2. 目標變數與類別變數處理
+if 'Attrition' in df_clean.columns:
+    df_clean['Attrition'] = df_clean['Attrition'].apply(lambda x: 1 if x == 'Yes' else 0)
+
+categorical_cols = df_clean.select_dtypes(include=['object']).columns
+df_final = pd.get_dummies(df_clean, columns=categorical_cols, drop_first=True)</code></pre>
+
+    <div class="image-container">
+        <img src="report_images/6_correlation_chart.png" alt="Top Factors Correlated with Attrition" style="width: 70%; height: auto;" onerror="this.style.display='none'">
+    </div>
+
+    <h3>Phase 4 & 5: Modeling & Evaluation</h3>
+    <p>A <strong>Random Forest classifier</strong> was used. Random forests are effective at handling categorical data, are less prone to overfitting, and can provide interpretations of feature importance.</p>
+    <ul>
+        <li><strong>Model Performance:</strong> The final model achieved <strong>87.76% accuracy</strong> on the test set, demonstrating excellent performance.</li>
+        <li><strong>Confusion Matrix Analysis:</strong> The model is highly accurate in predicting Retention (Class 0), and effectively captures potential risks in predicting Departure (Class 1), helping HR intervene early.</li>
+    </ul>
+
+<pre><code>print("--- Modeling & Evaluation (Random Forest) ---")
+
+# 1. 切分訓練集與測試集
+X = df_final.drop('Attrition', axis=1)
+y = df_final['Attrition']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 2. 訓練模型
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# 3. 預測結果
+y_pred = rf_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"🏆 Model Accuracy: {accuracy:.2%}")</code></pre>
+
+    <div class="image-container">
+        <img src="report_images/7_confusion_matrix.png" alt="Confusion Matrix" style="width: 70%; height: auto;" onerror="this.style.display='none'">
+    </div>
+
+    <h3>Phase 6: Application & Knowledge</h3>
+    <p>Based on model analysis, the key factors most significantly influencing churn were identified:</p>
+
+    <div class="image-container">
+        <img src="report_images/8_feature_importance.png" alt="Top 15 Feature Importance" style="width: 70%; height: auto;" onerror="this.style.display='none'">
+    </div>
+
+    <h4>Key Factor 1: Monthly Income</h4>
+    <div class="insight-box">
+        <strong>Insight:</strong> This is the highest-weighted feature, indicating that salary is a decisive factor in employee retention.<br>
+        <strong>Action Recommendation:</strong> Conduct salary benchmarking analysis for positions with high turnover risk to ensure that compensation is competitive in the market.
+    </div>
+
+    <h4>Key Factor 2: Overtime</h4>
+    <div class="insight-box">
+        <strong>Insight:</strong> Overtime is highly correlated with turnover.<br>
+        <strong>Action Recommendation:</strong> Review staffing levels, promote work-life balance plans, and prevent employees from leaving due to overwork.
+    </div>
+
+    <h4>Key Factor 3: Age</h4>
+    <div class="insight-box">
+        <strong>Insight:</strong> Younger employees have higher turnover rates, possibly due to uncertainty about career development.<br>
+        <strong>Action Recommendation:</strong> Establish mentorship programs or clear promotion paths to increase the sense of belonging among young talent.
+    </div>
+
+    <h2>3. Reflection</h2>
+
+    <h3>What went well:</h3>
+    <ul>
+        <li><strong>Efficient Tool Selection:</strong> Using Python as the primary tool proved highly effective. Compared to visualization-focused tools like Tableau, Python offered superior flexibility in data manipulation and modeling. Its extensive ecosystem enabled us to easily implement complex algorithms such as Random Forests, which would have been challenging in a purely drag-and-drop environment.</li>
+        <li><strong>Automated Pipeline:</strong> Successfully established a computerized data processing pipeline that streamlines the workflow from raw data cleaning to final model evaluation.</li>
+    </ul>
+
+    <h3>What could be improved:</h3>
+    <ul>
+        <li><strong>Balancing the Data:</strong> Currently, there are far fewer examples of employees "leaving" than of those "staying.". In the future, we should use techniques to increase the number of examples for the 'leaving' group to help the model identify at-risk employees more easily.</li>
+        <li><strong>Testing More Models:</strong> We only used Random Forest this time. Future projects should test and compare other popular algorithms to see if they can achieve even higher accuracy.</li>
+        <li><strong>Focusing on Business Costs:</strong> Missing an employee who is about to quit is much more expensive than wrongly suspecting someone will leave. Future improvements should teach the model to be more careful about identifying potential leavers, offering greater value to the company.</li>
+    </ul>
+
+</div>
+
+</body>
+</html>
