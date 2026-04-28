@@ -41,13 +41,16 @@
             transition: 0.2s;
         }
 
-        .back-link:hover { color: var(--text-main); }
+        .back-link:hover {
+            color: var(--text-main);
+        }
 
         /* --- 標題與按鈕排版 --- */
         .header-action-group {
             display: flex;
-            align-items: flex-end;
+            align-items: center; /* 改為 center，讓變小的按鈕跟標題垂直置中對齊，看起來更精緻 */
             margin-bottom: 40px;
+            gap: 20px;
         }
 
         .title-area h1 {
@@ -64,20 +67,29 @@
             font-weight: 400;
         }
 
+        /* 確保群組推到最右側 */
+        .button-group {
+            margin-left: auto;
+            display: flex;
+            gap: 10px; /* 按鈕變小了，中間的間距也稍微縮小一點點 */
+        }
+
         .cta-button {
             display: inline-block;
-            margin-left: auto;
             background: #2c3e50;
             color: white;
             text-decoration: none;
-            padding: 10px 20px;
+            padding: 7px 14px; /* 【關鍵修改】：原本是 10px 20px，現在大幅縮小內邊距 */
             border-radius: 5px;
             font-weight: 500;
-            font-size: 1rem;
+            font-size: 0.85rem; /* 【關鍵修改】：字體縮小到跟下方免責聲明一樣的精緻大小 */
             transition: 0.3s;
+            white-space: nowrap;
         }
 
-        .cta-button:hover { background: #000; }
+        .cta-button:hover {
+            background: #000;
+        }
 
         /* --- 核心：統一所有區塊標題 (H3 和 H4) --- */
         h3, .docs-box h4, .statement-box h4 {
@@ -128,7 +140,10 @@
             color: #333;
             margin-bottom: 15px;
         }
-        .docs-box p:last-child { margin-bottom: 0; }
+
+        .docs-box p:last-child {
+            margin-bottom: 0;
+        }
 
         /* --- 紅色聲明框 (Statement) --- */
         .statement-box {
@@ -155,9 +170,18 @@
             font-size: 1rem; /* 與上方區塊內容大小完全對齊 */
             line-height: 1.7;
         }
-        .statement-box li { margin-bottom: 12px; }
-        .statement-box li:last-child { margin-bottom: 0; }
-        .statement-box strong { color: #222; }
+
+        .statement-box li {
+            margin-bottom: 12px;
+        }
+
+        .statement-box li:last-child {
+            margin-bottom: 0;
+        }
+
+        .statement-box strong {
+            color: #222;
+        }
 
         footer {
             margin-top: 80px;
@@ -177,9 +201,15 @@
             <h1>Cat Boost</h1>
             <p class="tagline">An interesting little automation script.</p>
         </div>
-        <a class="cta-button" href="https://github.com/JSLin29/JSLin29.github.io/blob/main/CatBoost/cat_Boost.ahk" target="_blank">
-            <i class="fab fa-github"></i> View Source Code on GitHub
-        </a>
+        <div class="button-group">
+            <a class="cta-button" download="cat_Boost.ahk" href="https://jslin29.github.io/CatBoost/cat_Boost.ahk">
+                <i class="fas fa-download"></i> Download Script
+            </a>
+            <a class="cta-button" href="https://github.com/JSLin29/JSLin29.github.io/blob/main/CatBoost/cat_Boost.ahk"
+               target="_blank">
+                <i class="fab fa-github"></i> View Source Code
+            </a>
+        </div>
     </div>
 
     <h3>Quick Start</h3>
@@ -193,10 +223,13 @@
     <div class="docs-box">
         <h4>How it Works</h4>
         <p>
-            To play the "Bongo Cat" game, you can download it from Steam. This is a simple script to speed up the accumulation of hits in the game Bongo Cat.
+            To play the "Bongo Cat" game, you can download it from Steam. This is a simple script to speed up the
+            accumulation of hits in the game Bongo Cat.
         </p>
         <p>
-            Each hit grants a <strong>50x multiplier</strong> to the hit count, but this only applies to hitting the A through Z keys. A simple delay is included to prevent the game from detecting hits too quickly and not counting them. A section is also included to address the issue of the <strong>Shift key</strong>.
+            Each hit grants a <strong>50x multiplier</strong> to the hit count, but this only applies to hitting the A
+            through Z keys. A simple delay is included to prevent the game from detecting hits too quickly and not
+            counting them. A section is also included to address the issue of the <strong>Shift key</strong>.
         </p>
         <p>To try it out, press <strong>F1</strong> to start the game!</p>
     </div>
@@ -204,9 +237,17 @@
     <div class="statement-box">
         <h4><i class="fas fa-exclamation-triangle"></i> Statement</h4>
         <ol>
-            <li><strong>Prohibition of Illegal Use:</strong> This code is for technical exchange and reference only. It is strictly prohibited to use this script for any purpose that violates the online service user agreement, unfair competition, or disruption. Any form of illegal cheating is discouraged.</li>
-            <li><strong>Risks of Use:</strong> Users assume all risks arising from executing this script, including but not limited to: account bans or system instability. The developer is not liable for any losses resulting from the use of this program.</li>
-            <li><strong>Licensing and Distribution:</strong> This project is provided "as is". Please retain the integrity of this disclaimer when citing it.</li>
+            <li><strong>Prohibition of Illegal Use:</strong> This code is for technical exchange and reference only. It
+                is strictly prohibited to use this script for any purpose that violates the online service user
+                agreement, unfair competition, or disruption. Any form of illegal cheating is discouraged.
+            </li>
+            <li><strong>Risks of Use:</strong> Users assume all risks arising from executing this script, including but
+                not limited to: account bans or system instability. The developer is not liable for any losses resulting
+                from the use of this program.
+            </li>
+            <li><strong>Licensing and Distribution:</strong> This project is provided "as is". Please retain the
+                integrity of this disclaimer when citing it.
+            </li>
         </ol>
     </div>
 
