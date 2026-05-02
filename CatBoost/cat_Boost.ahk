@@ -1,6 +1,7 @@
 ﻿/*
 ================================================================================
 Project Name: cat Boost
+Version: v1.0.0
 Date: 2026/04/22
 Author: Payton Lin
 Email: paytonljs.mm324@gmail.com
@@ -75,9 +76,10 @@ Esc:: ExitApp()
 ~z:: {
     ; Add Blind，AHK should not interfere with your Shift key state.
     Loop 50 {
-        Send "{Blind}{ScrollLock down}"
+        ; Avoid the locking side effects of Scroll Lock
+        Send "{Blind}{F13 down}"
         Sleep 1
-        Send "{Blind}{ScrollLock up}"
+        Send "{Blind}{F13 up}"
         Sleep 1
     }
 }
